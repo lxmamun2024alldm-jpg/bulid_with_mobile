@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer Mamun</title>
+    <meta name="description" content="Build With Mobile Hub - Your source for mobile development projects and tutorials">
+    <meta name="keywords" content="mobile development, android, ios, flutter, react native, app development">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    
+    <!-- Custom CSS -->
+    <style>
+        /* Custom animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        .animate-fade-in-delay {
+            animation: fadeIn 0.8s ease-out 0.2s both;
+        }
+        
+        .animate-fade-in-delay-2 {
+            animation: fadeIn 0.8s ease-out 0.4s both;
+        }
+        
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 5px;
+        }
+        
+        /* Glassmorphism effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Mobile menu animation */
+        .mobile-menu-enter {
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Card hover effects */
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        /* Button effects */
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* Loading animation */
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Auth modal styles */
+        .auth-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .auth-modal.active {
+            display: flex;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #333;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            z-index: 1001;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 overflow-x-hidden">
+    
+    <!-- Header Navigation -->
+    <header class="fixed top-0 w-full bg-white/90 backdrop-blur-md shadow-sm z-50 transition-all duration-300">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <!-- Logo -->
+                <a href="#home" class="flex items-center space-x-2 group">
+                    <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center transform group-hover:rotate-12 transition-transform">
+                        <i class="fas fa-mobile-alt text-white"></i>
+                    </div>
+                    <span class="text-xl font-bold gradient-text">Build With Mobile</span>
+                </a>
+                
+                <!-- Desktop Navigation -->
+                <nav class="hidden lg:flex items-center space-x-8">
+                    <a href="#home" class="nav-link text-gray-700 hover:text-purple-600 transition-colors font-medium">Home</a>
+                    <a href="#projects" class="nav-link text-gray-700 hover:text-purple-600 transition-colors font-medium">Projects</a>
+                    <a href="#features" class="nav-link text-gray-700 hover:text-purple-600 transition-colors font-medium">Features</a>
+                    <a href="#blog" class="nav-link text-gray-700 hover:text-purple-600 transition-colors font-medium">Blog</a>
+                    <a href="#contact" class="nav-link text-gray-700 hover:text-purple-600 transition-colors font-medium">Contact</a>
+                    <button id="authBtn" class="px-6 py-2 btn-primary text-white rounded-full font-semibold">
+                        Login
+                    </button>
+                    <button id="adminBtn" class="hidden px-6 py-2 bg-red-600 text-white rounded-full font-semibold hover:bg-red-700 transition">
+                        Admin Panel
+                    </button>
+                </nav>
+                
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="lg:hidden text-gray-700 focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+            
+            <!-- Mobile Navigation -->
+            <nav id="mobile-menu" class="hidden lg:hidden mt-4 pb-4 mobile-menu-enter">
+                <a href="#home" class="block py-3 text-gray-700 hover:text-purple-600 transition-colors font-medium border-b">Home</a>
+                <a href="#projects" class="block py-3 text-gray-700 hover:text-purple-600 transition-colors font-medium border-b">Projects</a>
+                <a href="#features" class="block py-3 text-gray-700 hover:text-purple-600 transition-colors font-medium border-b">Features</a>
+                <a href="#blog" class="block py-3 text-gray-700 hover:text-purple-600 transition-colors font-medium border-b">Blog</a>
+                <a href="#contact" class="block py-3 text-gray-700 hover:text-purple-600 transition-colors font-medium">Contact</a>
+                <button id="mobileAuthBtn" class="w-full mt-4 px-6 py-3 btn-primary text-white rounded-full font-semibold">
+                    Login
+                </button>
+                <button id="mobileAdminBtn" class="hidden w-full mt-2 px-6 py-3 bg-red-600 text-white rounded-full font-semibold">
+                    Admin Panel
+                </button>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Authentication Modal -->
+    <div id="authModal" class="auth-modal">
+        <div class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Login</h2>
+                <button id="closeAuthModal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" id="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="your@email.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <input type="password" id="password" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="••••••••">
+                </div>
+                <button type="submit" class="w-full py-2 btn-primary text-white rounded-lg font-semibold">
+                    Login
+                </button>
+            </form>
+            
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600">
+                    Don't have an account? 
+                    <a href="#" id="showSignup" class="text-purple-600 hover:text-purple-700 font-medium">Sign up</a>
+                </p>
+            </div>
+            
+            <div id="loginError" class="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg hidden">
+                <span id="loginErrorText"></span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Signup Modal -->
+    <div id="signupModal" class="auth-modal">
+        <div class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Sign Up</h2>
+                <button id="closeSignupModal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="signupForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                    <input type="text" id="signupName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Your Name">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" id="signupEmail" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="your@email.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <input type="password" id="signupPassword" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="••••••••">
+                </div>
+                <button type="submit" class="w-full py-2 btn-primary text-white rounded-lg font-semibold">
+                    Sign Up
+                </button>
+            </form>
+            
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600">
+                    Already have an account? 
+                    <a href="#" id="showLogin" class="text-purple-600 hover:text-purple-700 font-medium">Login</a>
+                </p>
+            </div>
+            
+            <div id="signupError" class="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg hidden">
+                <span id="signupErrorText"></span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+    
+    <!-- Hero Section with Three.js Background -->
+    <section id="home" class="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
+        <div id="hero-canvas" class="absolute inset-0 z-0"></div>
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-600/90 via-purple-600/80 to-pink-600/70 z-10"></div>
+        
+        <div class="container mx-auto px-4 relative z-20">
+            <div class="text-center text-white max-w-4xl mx-auto">
+                <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 animate-fade-in">
+                    Build With <span class="text-yellow-300">Mobile</span> Hub
+                </h1>
+                <p class="text-lg sm:text-xl md:text-2xl mb-8 animate-fade-in-delay opacity-90">
+                    Discover amazing mobile development projects, tutorials, and resources to accelerate your learning journey
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-delay-2">
+                    <a href="#projects" class="px-8 py-4 bg-white text-purple-600 rounded-full font-bold hover:bg-gray-100 transition-all transform hover:scale-105 shadow-lg">
+                        <i class="fas fa-folder-open mr-2"></i> Browse Projects
+                    </a>
+                    <a href="#blog" class="px-8 py-4 bg-transparent border-2 border-white text-white rounded-full font-bold hover:bg-white hover:text-purple-600 transition-all transform hover:scale-105">
+                        <i class="fas fa-book mr-2"></i> Read Blog
+                    </a>
+                </div>
+                
+                <!-- Stats -->
+                <div class="grid grid-cols-3 gap-8 mt-16 animate-fade-in-delay-2">
+                    <div class="text-center">
+                        <div class="text-3xl md:text-4xl font-bold text-yellow-300" id="projectsCount">0</div>
+                        <div class="text-sm md:text-base opacity-80">Projects</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl md:text-4xl font-bold text-yellow-300" id="tutorialsCount">0</div>
+                        <div class="text-sm md:text-base opacity-80">Tutorials</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl md:text-4xl font-bold text-yellow-300" id="developersCount">0</div>
+                        <div class="text-sm md:text-base opacity-80">Developers</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 animate-bounce">
+            <i class="fas fa-chevron-down text-white text-2xl"></i>
+        </div>
+    </section>
+    
+    <!-- Featured Projects Section -->
+    <section id="projects" class="py-16 md:py-24 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 gradient-text">Featured Projects</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto text-lg">Check out our latest mobile development projects with source code</p>
+            </div>
+            
+            <div id="projectsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Projects will be loaded from Firebase here -->
+                <div class="col-span-full flex justify-center py-8">
+                    <div class="loader"></div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <button class="px-8 py-4 btn-primary text-white rounded-full font-bold text-lg shadow-lg">
+                    View All Projects <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section id="features" class="py-16 md:py-24 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 gradient-text">Why Choose Build With Mobile</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto text-lg">We provide everything you need to succeed in mobile development</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="text-center group">
+                    <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center transform group-hover:scale-110 transition-transform">
+                        <i class="fas fa-code text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Clean Code</h3>
+                    <p class="text-gray-600">Well-structured, commented, and maintainable code following industry best practices</p>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="text-center group">
+                    <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-green-500 to-teal-600 rounded-full flex items-center justify-center transform group-hover:scale-110 transition-transform">
+                        <i class="fas fa-mobile-alt text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Mobile First</h3>
+                    <p class="text-gray-600">All projects are optimized for mobile devices with responsive design</p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="text-center group">
+                    <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center transform group-hover:scale-110 transition-transform">
+                        <i class="fas fa-book text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Documentation</h3>
+                    <p class="text-gray-600">Comprehensive documentation and tutorials for easy understanding</p>
+                </div>
+                
+                <!-- Feature 4 -->
+                <div class="text-center group">
+                    <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center transform group-hover:scale-110 transition-transform">
+                        <i class="fas fa-users text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Community Support</h3>
+                    <p class="text-gray-600">Active community forum for help and collaboration</p>
+                </div>
+                
+                <!-- Feature 5 -->
+                <div class="text-center group">
+                    <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-full flex items-center justify-center transform group-hover:scale-110 transition-transform">
+                        <i class="fas fa-sync text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Regular Updates</h3>
+                    <p class="text-gray-600">Projects are regularly updated with latest features and security patches</p>
+                </div>
+                
+                <!-- Feature 6 -->
+                <div class="text-center group">
+                    <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-full flex items-center justify-center transform group-hover:scale-110 transition-transform">
+                        <i class="fas fa-star text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Premium Quality</h3>
+                    <p class="text-gray-600">Production-ready code with professional design and functionality</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Latest Blog Posts Section -->
+    <section id="blog" class="py-16 md:py-24 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 gradient-text">Latest Blog Posts</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto text-lg">Stay updated with the latest trends and tutorials in mobile development</p>
+            </div>
+            
+            <div id="blogContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Blog posts will be loaded from Firebase here -->
+                <div class="col-span-full flex justify-center py-8">
+                    <div class="loader"></div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <button class="px-8 py-4 btn-primary text-white rounded-full font-bold text-lg shadow-lg">
+                    View All Posts <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Newsletter Section -->
+    <section class="py-16 bg-gradient-to-br from-purple-600 to-blue-600">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto text-center text-white">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Stay Updated</h2>
+                <p class="text-lg mb-8 opacity-90">Subscribe to our newsletter and get the latest mobile development resources delivered to your inbox</p>
+                <form id="newsletterForm" class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+                    <input type="email" id="newsletterEmail" placeholder="Enter your email" class="flex-1 px-6 py-3 rounded-full text-gray-800 focus:outline-none focus:ring-4 focus:ring-white/30">
+                    <button type="submit" class="px-8 py-3 bg-white text-purple-600 rounded-full font-bold hover:bg-gray-100 transition transform hover:scale-105">
+                        Subscribe
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Contact Section -->
+    <section id="contact" class="py-16 md:py-24 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 gradient-text">Get In Touch</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto text-lg">Have questions or want to collaborate? We'd love to hear from you</p>
+            </div>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Contact Info -->
+                    <div class="space-y-6">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-envelope text-purple-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold mb-1">Email</h3>
+                                <p class="text-gray-600">mamundeveloper72@gmail.com</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-phone text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold mb-1">Phone</h3>
+                                <p class="text-gray-600">+8801401702667</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-map-marker-alt text-green-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold mb-1">Address</h3>
+                                <p class="text-gray-600"> Dhaka,Bangladesh </p>
+                            </div>
+                        </div>
+                        
+                        <!-- Social Links -->
+                        <div class="pt-6">
+                            <h3 class="font-semibold mb-4">Follow Us</h3>
+                            <div class="flex space-x-4">
+                                <a href="#" class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center hover:bg-purple-600 hover:text-white transition">
+                                    <i class="fab fa-youtube"></i>
+                                </a>
+                                <a href="#" class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center hover:bg-purple-600 hover:text-white transition">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                                <a href="#" class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center hover:bg-purple-600 hover:text-white transition">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                                <a href="#" class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center hover:bg-purple-600 hover:text-white transition">
+                                    <i class="fab fa-linkedin"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Contact Form -->
+                    <form id="contactForm" class="bg-white rounded-xl shadow-lg p-6">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 font-semibold mb-2">Name</label>
+                            <input type="text" id="contactName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500" placeholder="Your Name">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 font-semibold mb-2">Email</label>
+                            <input type="email" id="contactEmail" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500" placeholder="your@email.com">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 font-semibold mb-2">Message</label>
+                            <textarea id="contactMessage" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500" placeholder="Your message..."></textarea>
+                        </div>
+                        <button type="submit" class="w-full px-6 py-3 btn-primary text-white rounded-lg font-semibold">
+                            Send Message <i class="fas fa-paper-plane ml-2"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- About -->
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-mobile-alt text-white"></i>
+                        </div>
+                        <span class="text-xl font-bold">Build With Mobile</span>
+                    </div>
+                    <p class="text-gray-400">Your source for mobile development projects, tutorials, and resources.</p>
+                </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#home" class="text-gray-400 hover:text-white transition">Home</a></li>
+                        <li><a href="#projects" class="text-gray-400 hover:text-white transition">Projects</a></li>
+                        <li><a href="#blog" class="text-gray-400 hover:text-white transition">Blog</a></li>
+                        <li><a href="#contact" class="text-gray-400 hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Categories -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Categories</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Android Development</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">iOS Development</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Flutter</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">React Native</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Newsletter -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Newsletter</h3>
+                    <p class="text-gray-400 mb-4">Subscribe for latest updates</p>
+                    <form class="flex">
+                        <input type="email" placeholder="Your email" class="flex-1 px-4 py-2 bg-gray-800 rounded-l-lg focus:outline-none">
+                        <button type="submit" class="px-4 py-2 bg-purple-600 rounded-r-lg hover:bg-purple-700 transition">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 Build With Mobile. All rights reserved. | Made with</i> for Developer Mamun</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="fixed bottom-8 right-8 w-12 h-12 bg-purple-600 text-white rounded-full shadow-lg hover:bg-purple-700 transition transform hover:scale-110 hidden">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+    
+    <!-- JavaScript -->
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBdyxdhXiMJrH1YHZ4LGef1RYUi1ZoaADA",
+            authDomain: "developermamun-59d69.firebaseapp.com",
+            databaseURL: "https://developermamun-59d69-default-rtdb.firebaseio.com",
+            projectId: "developermamun-59d69",
+            storageBucket: "developermamun-59d69.firebasestorage.app",
+            messagingSenderId: "138944404949",
+            appId: "1:138944404949:web:2719f25bcfedf4c4a8315c"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+        
+        // Global variables
+        let currentUser = null;
+        
+        // DOM Elements
+        const authModal = document.getElementById('authModal');
+        const signupModal = document.getElementById('signupModal');
+        const authBtn = document.getElementById('authBtn');
+        const adminBtn = document.getElementById('adminBtn');
+        const mobileAuthBtn = document.getElementById('mobileAuthBtn');
+        const mobileAdminBtn = document.getElementById('mobileAdminBtn');
+        const closeAuthModal = document.getElementById('closeAuthModal');
+        const closeSignupModal = document.getElementById('closeSignupModal');
+        const showSignup = document.getElementById('showSignup');
+        const showLogin = document.getElementById('showLogin');
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        const loginError = document.getElementById('loginError');
+        const loginErrorText = document.getElementById('loginErrorText');
+        const signupError = document.getElementById('signupError');
+        const signupErrorText = document.getElementById('signupErrorText');
+        const toast = document.getElementById('toast');
+        const projectsContainer = document.getElementById('projectsContainer');
+        const blogContainer = document.getElementById('blogContainer');
+        const projectsCount = document.getElementById('projectsCount');
+        const tutorialsCount = document.getElementById('tutorialsCount');
+        const developersCount = document.getElementById('developersCount');
+        const newsletterForm = document.getElementById('newsletterForm');
+        const contactForm = document.getElementById('contactForm');
+        
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check auth state
+            auth.onAuthStateChanged(user => {
+                currentUser = user;
+                updateAuthUI();
+                loadProjects();
+                loadBlogPosts();
+                loadStats();
+            });
+            
+            // Event listeners
+            authBtn.addEventListener('click', () => {
+                authModal.classList.add('active');
+            });
+            
+            mobileAuthBtn.addEventListener('click', () => {
+                authModal.classList.add('active');
+            });
+            
+            adminBtn.addEventListener('click', () => {
+                window.location.href = 'admin.html';
+            });
+            
+            mobileAdminBtn.addEventListener('click', () => {
+                window.location.href = 'admin.html';
+            });
+            
+            closeAuthModal.addEventListener('click', () => {
+                authModal.classList.remove('active');
+            });
+            
+            closeSignupModal.addEventListener('click', () => {
+                signupModal.classList.remove('active');
+            });
+            
+            showSignup.addEventListener('click', (e) => {
+                e.preventDefault();
+                authModal.classList.remove('active');
+                signupModal.classList.add('active');
+            });
+            
+            showLogin.addEventListener('click', (e) => {
+                e.preventDefault();
+                signupModal.classList.remove('active');
+                authModal.classList.add('active');
+            });
+            
+            loginForm.addEventListener('submit', handleLogin);
+            signupForm.addEventListener('submit', handleSignup);
+            newsletterForm.addEventListener('submit', handleNewsletter);
+            contactForm.addEventListener('submit', handleContact);
+            
+            // Mobile menu toggle
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                const icon = mobileMenuBtn.querySelector('i');
+                icon.classList.toggle('fa-bars');
+                icon.classList.toggle('fa-times');
+            });
+            
+            // Close mobile menu when clicking on a link
+            const mobileLinks = mobileMenu.querySelectorAll('a');
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                    const icon = mobileMenuBtn.querySelector('i');
+                    icon.classList.add('fa-bars');
+                    icon.classList.remove('fa-times');
+                });
+            });
+            
+            // Header scroll effect
+            window.addEventListener('scroll', () => {
+                const header = document.querySelector('header');
+                if (window.scrollY > 100) {
+                    header.classList.add('shadow-lg');
+                } else {
+                    header.classList.remove('shadow-lg');
+                }
+            });
+            
+            // Back to top button
+            const backToTopBtn = document.getElementById('backToTop');
+            
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    backToTopBtn.classList.remove('hidden');
+                } else {
+                    backToTopBtn.classList.add('hidden');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            
+            // Initialize Three.js when page loads
+            window.addEventListener('load', initThreeJS);
+            
+            // Intersection Observer for animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+            
+            // Observe all sections
+            document.querySelectorAll('section').forEach(section => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+                section.style.transition = 'all 0.6s ease-out';
+                observer.observe(section);
+            });
+        });
+        
+        // Authentication functions
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            auth.signInWithEmailAndPassword(email, password)
+                .then(() => {
+                    authModal.classList.remove('active');
+                    showToast('Login successful!', 'success');
+                    loginForm.reset();
+                })
+                .catch(error => {
+                    loginErrorText.textContent = error.message;
+                    loginError.classList.remove('hidden');
+                });
+        }
+        
+        function handleSignup(e) {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    return userCredential.user.updateProfile({
+                        displayName: name
+                    });
+                })
+                .then(() => {
+                    // Create user document in Realtime Database
+                    const userData = {
+                        name: name,
+                        email: email,
+                        role: 'user',
+                        createdAt: firebase.database.ServerValue.TIMESTAMP
+                    };
+                    
+                    return database.ref('users/' + auth.currentUser.uid).set(userData);
+                })
+                .then(() => {
+                    signupModal.classList.remove('active');
+                    showToast('Account created successfully!', 'success');
+                    signupForm.reset();
+                })
+                .catch(error => {
+                    signupErrorText.textContent = error.message;
+                    signupError.classList.remove('hidden');
+                });
+        }
+        
+        function updateAuthUI() {
+            if (currentUser) {
+                authBtn.textContent = 'Logout';
+                authBtn.removeEventListener('click', () => {
+                    authModal.classList.add('active');
+                });
+                authBtn.addEventListener('click', handleLogout);
+                
+                mobileAuthBtn.textContent = 'Logout';
+                mobileAuthBtn.removeEventListener('click', () => {
+                    authModal.classList.add('active');
+                });
+                mobileAuthBtn.addEventListener('click', handleLogout);
+                
+                // Show admin button if user is admin
+                if (currentUser.email === 'admin@buildwithmobile.com') {
+                    adminBtn.classList.remove('hidden');
+                    mobileAdminBtn.classList.remove('hidden');
+                }
+            } else {
+                authBtn.textContent = 'Login';
+                authBtn.removeEventListener('click', handleLogout);
+                authBtn.addEventListener('click', () => {
+                    authModal.classList.add('active');
+                });
+                
+                mobileAuthBtn.textContent = 'Login';
+                mobileAuthBtn.removeEventListener('click', handleLogout);
+                mobileAuthBtn.addEventListener('click', () => {
+                    authModal.classList.add('active');
+                });
+                
+                adminBtn.classList.add('hidden');
+                mobileAdminBtn.classList.add('hidden');
+            }
+        }
+        
+        function handleLogout() {
+            auth.signOut()
+                .then(() => {
+                    showToast('Logged out successfully!', 'success');
+                });
+        }
+        
+        // Load projects from Firebase Realtime Database
+        function loadProjects() {
+            projectsContainer.innerHTML = '<div class="col-span-full flex justify-center py-8"><div class="loader"></div></div>';
+            
+            database.ref('projects')
+                .orderByChild('createdAt')
+                .limitToLast(6)
+                .once('value')
+                .then(snapshot => {
+                    const projects = snapshot.val();
+                    if (!projects) {
+                        projectsContainer.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500">No projects found</div>';
+                        return;
+                    }
+                    
+                    projectsContainer.innerHTML = '';
+                    // Convert to array and reverse to get newest first
+                    const projectsArray = Object.entries(projects).reverse();
+                    
+                    projectsArray.forEach(([id, project]) => {
+                        if (project.status === 'active') {
+                            const projectCard = createProjectCard(project, id);
+                            projectsContainer.innerHTML += projectCard;
+                        }
+                    });
+                })
+                .catch((error) => {
+                    console.error('Error loading projects:', error);
+                    projectsContainer.innerHTML = `
+                        <div class="col-span-full text-center py-8 text-red-500">
+                            Error loading projects
+                        </div>`;
+                });
+        }
+        
+        function createProjectCard(project, id) {
+            const tags = project.tags ? project.tags.map(tag => `<span class="px-2 py-1 bg-blue-100 text-blue-600 text-xs rounded">${tag}</span>`).join('') : '';
+            
+            return `
+                <div class="card-hover bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="h-48 bg-gradient-to-br from-blue-500 to-purple-600 relative overflow-hidden">
+                        <img src="${project.image || 'https://picsum.photos/seed/' + id + '/400/300.jpg'}" 
+                             alt="${project.title}" 
+                             class="w-full h-full object-cover opacity-80">
+                        <div class="absolute top-4 right-4">
+                            ${project.isNew ? '<span class="px-3 py-1 bg-green-500 text-white text-xs rounded-full">New</span>' : ''}
+                            ${project.isPopular ? '<span class="px-3 py-1 bg-yellow-500 text-white text-xs rounded-full">Popular</span>' : ''}
+                            ${project.isHot ? '<span class="px-3 py-1 bg-red-500 text-white text-xs rounded-full">Hot</span>' : ''}
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">${project.title}</h3>
+                        <p class="text-gray-600 mb-4">${project.description}</p>
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="flex space-x-2">
+                                ${tags}
+                            </div>
+                            <span class="text-sm text-gray-500">v${project.version || '1.0.0'}</span>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button onclick="downloadProject('${id}')" class="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
+                                <i class="fas fa-download mr-2"></i> Download
+                            </button>
+                            <button onclick="viewDemo('${id}')" class="flex-1 px-4 py-2 border border-purple-600 text-purple-600 rounded-lg hover:bg-purple-50 transition">
+                                <i class="fas fa-eye mr-2"></i> Demo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function downloadProject(projectId) {
+            // Increment download count
+            database.ref('projects/' + projectId + '/downloads').transaction((currentDownloads) => {
+                return (currentDownloads || 0) + 1;
+            });
+            
+            // Get project data
+            database.ref('projects/' + projectId).once('value').then(snapshot => {
+                const project = snapshot.val();
+                
+                // Log download to analytics
+                const downloadData = {
+                    projectId: projectId,
+                    projectTitle: project.title,
+                    userId: currentUser ? currentUser.uid : null,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                };
+                
+                database.ref('downloads').push(downloadData);
+                
+                // Redirect to download URL
+                if (project.downloadUrl) {
+                    window.open(project.downloadUrl, '_blank');
+                } else {
+                    showToast('Download link not available', 'error');
+                }
+            });
+        }
+        
+        function viewDemo(projectId) {
+            // Get project data
+            database.ref('projects/' + projectId).once('value').then(snapshot => {
+                const project = snapshot.val();
+                
+                // Log demo view to analytics
+                const demoData = {
+                    projectId: projectId,
+                    projectTitle: project.title,
+                    userId: currentUser ? currentUser.uid : null,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                };
+                
+                database.ref('demoViews').push(demoData);
+                
+                // Redirect to demo URL
+                if (project.demoUrl) {
+                    window.open(project.demoUrl, '_blank');
+                } else {
+                    showToast('Demo link not available', 'error');
+                }
+            });
+        }
+        
+        // Load blog posts from Firebase Realtime Database
+        function loadBlogPosts() {
+            blogContainer.innerHTML = '<div class="col-span-full flex justify-center py-8"><div class="loader"></div></div>';
+            
+            database.ref('posts')
+                .orderByChild('publishedAt')
+                .limitToLast(6)
+                .once('value')
+                .then(snapshot => {
+                    const posts = snapshot.val();
+                    if (!posts) {
+                        blogContainer.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500">No blog posts found</div>';
+                        return;
+                    }
+                    
+                    blogContainer.innerHTML = '';
+                    // Convert to array and reverse to get newest first
+                    const postsArray = Object.entries(posts).reverse();
+                    
+                    postsArray.forEach(([id, post]) => {
+                        if (post.status === 'published') {
+                            const blogCard = createBlogCard(post, id);
+                            blogContainer.innerHTML += blogCard;
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading blog posts:', error);
+                    blogContainer.innerHTML = '<div class="col-span-full text-center py-8 text-red-500">Error loading blog posts</div>';
+                });
+        }
+        
+        function createBlogCard(post, id) {
+            const publishDate = post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : 'Unknown';
+            const readTime = Math.ceil((post.content || '').length / 1000) || 5;
+            
+            return `
+                <article class="card-hover bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="h-48 bg-gradient-to-br from-blue-400 to-purple-600 relative">
+                        <img src="${post.featuredImage || 'https://picsum.photos/seed/' + id + '/400/300.jpg'}" 
+                             alt="${post.title}" 
+                             class="w-full h-full object-cover opacity-80">
+                        <div class="absolute top-4 left-4">
+                            <span class="px-3 py-1 bg-white/90 text-purple-600 text-xs rounded-full font-semibold">${post.category || 'Tutorial'}</span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center text-sm text-gray-500 mb-3">
+                            <i class="far fa-calendar mr-2"></i> ${publishDate}
+                            <span class="mx-2">•</span>
+                            <i class="far fa-clock mr-2"></i> ${readTime} min read
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">${post.title}</h3>
+                        <p class="text-gray-600 mb-4">${post.excerpt || 'No excerpt available'}</p>
+                        <a href="#" onclick="viewPost('${id}')" class="text-purple-600 font-semibold hover:text-purple-700 transition">
+                            Read More <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                </article>
+            `;
+        }
+        
+        function viewPost(postId) {
+            // Log post view to analytics
+            const viewData = {
+                postId: postId,
+                userId: currentUser ? currentUser.uid : null,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            };
+            
+            database.ref('postViews').push(viewData);
+            
+            // Redirect to post page
+            window.location.href = `post.html?id=${postId}`;
+        }
+        
+        // Load statistics from Firebase Realtime Database
+        function loadStats() {
+            // Get projects count
+            database.ref('projects').once('value').then(snapshot => {
+                const projects = snapshot.val();
+                const count = projects ? Object.keys(projects).length : 0;
+                projectsCount.textContent = count;
+            });
+            
+            // Get tutorials count (posts with category 'Tutorial')
+            database.ref('posts').orderByChild('category').equalTo('Tutorial').once('value').then(snapshot => {
+                const tutorials = snapshot.val();
+                const count = tutorials ? Object.keys(tutorials).length : 0;
+                tutorialsCount.textContent = count;
+            });
+            
+            // Get users count
+            database.ref('users').once('value').then(snapshot => {
+                const users = snapshot.val();
+                const count = users ? Object.keys(users).length : 0;
+                developersCount.textContent = count;
+            });
+        }
+        
+        // Handle newsletter subscription
+        function handleNewsletter(e) {
+            e.preventDefault();
+            const email = document.getElementById('newsletterEmail').value;
+            
+            // Save to Firebase Realtime Database
+            const newsletterData = {
+                email: email,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            };
+            
+            database.ref('newsletter').push(newsletterData)
+            .then(() => {
+                showToast('Successfully subscribed to newsletter!', 'success');
+                newsletterForm.reset();
+            })
+            .catch(error => {
+                showToast('Error subscribing to newsletter: ' + error.message, 'error');
+            });
+        }
+        
+        // Handle contact form submission
+        function handleContact(e) {
+            e.preventDefault();
+            const name = document.getElementById('contactName').value;
+            const email = document.getElementById('contactEmail').value;
+            const message = document.getElementById('contactMessage').value;
+            
+            // Save to Firebase Realtime Database
+            const contactData = {
+                name: name,
+                email: email,
+                message: message,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            };
+            
+            database.ref('contacts').push(contactData)
+            .then(() => {
+                showToast('Message sent successfully! We will get back to you soon.', 'success');
+                contactForm.reset();
+            })
+            .catch(error => {
+                showToast('Error sending message: ' + error.message, 'error');
+            });
+        }
+        
+        // Toast notification function
+        function showToast(message, type = 'success') {
+            toast.textContent = message;
+            toast.className = 'toast show';
+            
+            if (type === 'error') {
+                toast.style.backgroundColor = '#e53e3e';
+            } else {
+                toast.style.backgroundColor = '#333';
+            }
+            
+            setTimeout(() => {
+                toast.className = 'toast';
+            }, 3000);
+        }
+        
+        // Three.js Hero Animation
+        function initThreeJS() {
+            const container = document.getElementById('hero-canvas');
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true });
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            container.appendChild(renderer.domElement);
+            
+            // Create particles
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = 5000;
+            const posArray = new Float32Array(particlesCount * 3);
+            
+            for(let i = 0; i < particlesCount * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 10;
+            }
+            
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.005,
+                color: 0xffffff,
+                transparent: true,
+                opacity: 0.8
+            });
+            
+            const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particlesMesh);
+            
+            camera.position.z = 3;
+            
+            // Mouse movement
+            let mouseX = 0;
+            let mouseY = 0;
+            
+            document.addEventListener('mousemove', (event) => {
+                mouseX = event.clientX / window.innerWidth - 0.5;
+                mouseY = event.clientY / window.innerHeight - 0.5;
+            });
+            
+            // Animation
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                particlesMesh.rotation.x += 0.0005;
+                particlesMesh.rotation.y += 0.0005;
+                
+                particlesMesh.rotation.x += mouseY * 0.0005;
+                particlesMesh.rotation.y += mouseX * 0.0005;
+                
+                renderer.render(scene, camera);
+            }
+            
+            animate();
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+    </script>
+</body>
+</html>
